@@ -1,5 +1,8 @@
 __pycache__/
 .cache/
+.idea/
 *.pyc
 .DS_Store
 run*.sh
+training/
+chunsendydata
