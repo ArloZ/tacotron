@@ -6,7 +6,7 @@ import glob
 from util import audio
 
 
-def build_from_path(in_dir, out_dir, skip_step=1, num_workers=1, tqdm=lambda x: x):
+def build_from_path(in_dir, out_dir, num_workers=1, tqdm=lambda x: x):
   '''Preprocesses the THCHS30 dataset from a given input path into a given output directory.
 
     Args:
@@ -26,10 +26,7 @@ def build_from_path(in_dir, out_dir, skip_step=1, num_workers=1, tqdm=lambda x: 
   index = 1
   trn_files = glob.glob(os.path.join(in_dir, 'data', '*.trn'))
 
-  for index, trn in enumerate(trn_files):
-    if index % skip_step != 0:
-      continue
-
+  for trn in trn_files:
     with open(trn) as f:
       f.readline()
       pinyin = f.readline().strip('\n')
