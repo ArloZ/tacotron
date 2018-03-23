@@ -25,7 +25,7 @@ def build_from_path(in_dir, out_dir, num_workers=1, tqdm=lambda x: x):
     index = 1
     with open(os.path.join(in_dir, 'dst_metadata_v1.txt'), encoding='utf-8') as f:
         for line in f:
-            parts = line.strip().split('|')
+            parts = line.strip().strip('\n').split('|')
             wav_path = os.path.join(in_dir, 'data', parts[0])
             text = parts[1]
             futures.append(executor.submit(partial(_process_utterance, out_dir, index, wav_path, text)))
