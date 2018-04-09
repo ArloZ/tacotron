@@ -5,7 +5,7 @@ import os
 from util import audio
 
 
-def build_from_path(in_dir, out_dir, num_workers=1, tqdm=lambda x: x):
+def build_from_path(in_dir, out_dir, metadata, num_workers=1, tqdm=lambda x: x):
     '''Preprocesses the Chunsendy dataset from a given input path into a given output directory.
 
       Args:
@@ -23,7 +23,7 @@ def build_from_path(in_dir, out_dir, num_workers=1, tqdm=lambda x: x):
     executor = ProcessPoolExecutor(max_workers=num_workers)
     futures = []
     index = 1
-    with open(os.path.join(in_dir, 'metadata.txt'), encoding='utf-8') as f:
+    with open(os.path.join(in_dir, metadata), encoding='utf-8') as f:
         for line in f:
             parts = line.strip().strip('\n').split('|')
             wav_path = os.path.join(in_dir, 'data', parts[0])

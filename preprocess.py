@@ -34,7 +34,7 @@ def preprocess_chinese(args):
     in_dir = os.path.join(args.base_dir, 'chinesedata')
     out_dir = os.path.join(args.base_dir, args.output)
     os.makedirs(out_dir, exist_ok=True)
-    metadata = chinese.build_from_path(in_dir, out_dir, args.num_workers, tqdm=tqdm)
+    metadata = chinese.build_from_path(in_dir, out_dir, args.metadata, args.num_workers, tqdm=tqdm)
     write_metadata(metadata, out_dir)
 
 
@@ -55,6 +55,7 @@ def main():
     parser.add_argument('--output', default='training')
     parser.add_argument('--dataset', required=True, choices=['blizzard', 'ljspeech', 'thchs30', 'chinese'])
     parser.add_argument('--num_workers', type=int, default=cpu_count())
+    parser.add_argument('--metadata', default='metadata.txt')
     args = parser.parse_args()
     if args.dataset == 'blizzard':
         preprocess_blizzard(args)
