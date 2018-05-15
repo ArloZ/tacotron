@@ -5,8 +5,7 @@ from text.symbols import symbols
 from util.infolog import log
 from .helpers import TacoTestHelper, TacoTrainingHelper
 from .modules import encoder_cbhg, post_cbhg, prenet
-from .rnn_wrappers import DecoderPrenetWrapper, ConcatOutputAndAttentionWrapper
-
+from .rnn_wrappers import DecoderPrenetWrapper, ConcatOutputAndAttentionWrapper, ResidualAttensionWrapper
 
 
 class Tacotron():
@@ -55,12 +54,16 @@ class Tacotron():
 
       # Concatenate attention context vector and RNN cell output into a 512D vector.
       concat_cell = ConcatOutputAndAttentionWrapper(attention_cell)              # [N, T_in, 512]
-
+      concat_project_cell = OutputProjectionWrapper(concat_cell, 256)
+      residual1 = ResidualAttensionWrapper(ResidualWrapper(GRUCell(256)))
+      residual2 = ResidualAttensionWrapper(ResidualWrapper(GRUCell(256)))
+      concat_cell.add_residual_cell(residual1)
+      concat_cell.add_residual_cell(residual2)
       # Decoder (layers specified bottom to top):
       decoder_cell = MultiRNNCell([
-          OutputProjectionWrapper(concat_cell, 256),
-          ResidualWrapper(GRUCell(256)),
-          ResidualWrapper(GRUCell(256))
+          concat_project_cell,
+          residual1,
+          residual2
         ], state_is_tuple=True)                                                  # [N, T_in, 256]
 
       # Project onto r mel spectrograms (predict r outputs at each RNN step):
