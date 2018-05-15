@@ -39,7 +39,7 @@ class ConcatOutputAndAttentionWrapper(RNNCell):
     def __init__(self, cell):
         super(ConcatOutputAndAttentionWrapper, self).__init__()
         self._cell = cell
-        self._attention_state = None
+        self._residuals = []
 
     @property
     def state_size(self):
@@ -51,20 +51,24 @@ class ConcatOutputAndAttentionWrapper(RNNCell):
 
     def call(self, inputs, state):
         output, res_state = self._cell(inputs, state)
-        self._attention_state = res_state
+        for residual in self._residuals:
+            residual.set_attention_state(res_state)
         return tf.concat([output, res_state.attention], axis=-1), res_state
 
     def zero_state(self, batch_size, dtype):
         return self._cell.zero_state(batch_size, dtype)
 
-    def get_attention_state(self):
-        return self._attention_state
+    def add_residual(self, residual):
+        self._residuals.append(residual)
 
 
 class ResidualAttentionWrapper(ResidualWrapper):
-    def __init__(self, cell, attention_state):
+    def __init__(self, cell):
         super(ResidualAttentionWrapper, self).__init__(cell)
         self._cell = cell
+        self._attention_state = None
+
+    def set_attention_state(self, attention_state):
         self._attention_state = attention_state
 
     def call(self, inputs, state):

@@ -53,12 +53,13 @@ class Tacotron():
 
             # Concatenate attention context vector and RNN cell output into a 512D vector.
             concat_cell = ConcatOutputAndAttentionWrapper(attention_cell)  # [N, T_in, 512]
-
+            residual1 = ResidualAttentionWrapper(ResidualWrapper(GRUCell(256)))
+            residual2 = ResidualAttentionWrapper(ResidualWrapper(GRUCell(256)))
+            concat_cell.add_residual(residual1)
+            concat_cell.add_residual(residual2)
             # Decoder (layers specified bottom to top):
             decoder_cell = MultiRNNCell([
-                OutputProjectionWrapper(concat_cell, 256),
-                ResidualAttentionWrapper(ResidualWrapper(GRUCell(256)), concat_cell.get_attention_state()),
-                ResidualAttentionWrapper(ResidualWrapper(GRUCell(256)), concat_cell.get_attention_state())
+                OutputProjectionWrapper(concat_cell, 256), residual1, residual2
             ], state_is_tuple=True)  # [N, T_in, 256]
 
             # Project onto r mel spectrograms (predict r outputs at each RNN step):
