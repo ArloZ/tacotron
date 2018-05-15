@@ -5,8 +5,7 @@ from text.symbols import symbols
 from util.infolog import log
 from .helpers import TacoTestHelper, TacoTrainingHelper
 from .modules import encoder_cbhg, post_cbhg, prenet
-from .rnn_wrappers import DecoderPrenetWrapper, ConcatOutputAndAttentionWrapper, ResidualAttensionWrapper, \
-    ResidualAttentionWrapper
+from .rnn_wrappers import DecoderPrenetWrapper, ConcatOutputAndAttentionWrapper, ResidualAttentionWrapper
 
 
 class Tacotron():
