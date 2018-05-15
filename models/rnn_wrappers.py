@@ -63,7 +63,7 @@ class ConcatOutputAndAttentionWrapper(RNNCell):
 
 class ResidualAttentionWrapper(ResidualWrapper):
     def __init__(self, cell, attention_state):
-        super(ResidualAttentionWrapper, self).__init__()
+        super(ResidualAttentionWrapper, self).__init__(cell)
         self._cell = cell
         self._attention_state = attention_state
 
