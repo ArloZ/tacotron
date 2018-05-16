@@ -77,3 +77,14 @@ class ConcatOutputProjectionAndAttentionWrapper(RNNCell):
     def call(self, inputs, state):
         input_new = tf.concat([inputs, self._concat_cell.get_attention_state().attention], axis=-1)
         return self._cell(input_new, state)
+
+    @property
+    def state_size(self):
+        return self._cell.state_size
+
+    @property
+    def output_size(self):
+        return self._cell.output_size
+
+    def zero_state(self, batch_size, dtype):
+        return self._cell.zero_state(batch_size, dtype)
